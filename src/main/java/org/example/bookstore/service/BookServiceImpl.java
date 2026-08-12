@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.example.bookstore.dto.BookDto;
 import org.example.bookstore.dto.CreateBookRequestDto;
+import org.example.bookstore.dto.UpdateBookRequestDto;
 import org.example.bookstore.exception.EntityNotFoundException;
 import org.example.bookstore.mapper.BookMapper;
 import org.example.bookstore.model.Book;
@@ -19,6 +20,36 @@ public class BookServiceImpl implements BookService {
     public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+    }
+
+    @Override
+    public BookDto update(Long id, UpdateBookRequestDto bookDto) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Book with id " + id + " not found"));
+
+        book.setTitle(bookDto.getTitle());
+        book.setAuthor(bookDto.getAuthor());
+        book.setIsbn(bookDto.getIsbn());
+        book.setPrice(bookDto.getPrice());
+        book.setDescription(bookDto.getDescription());
+        book.setCoverImage(bookDto.getCoverImage());
+
+        Book updatedBook = bookRepository.save(book);
+
+        return bookMapper.toDto(updatedBook);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Book with id " + id + " not found"));
+
+        book.setDeleted(true);
+        bookRepository.save(book);
     }
 
     @Override
