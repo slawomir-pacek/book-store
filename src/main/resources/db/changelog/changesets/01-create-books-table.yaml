@@ -4,7 +4,7 @@ databaseChangeLog:
       author: slawomir
       changes:
         - createTable:
-            tableName: book
+            tableName: books
             columns:
               - column:
                   name: id
@@ -46,3 +46,10 @@ databaseChangeLog:
               - column:
                   name: cover_image
                   type: VARCHAR(255)
+
+              - column:
+                  name: is_deleted
+                  type: BIT
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
