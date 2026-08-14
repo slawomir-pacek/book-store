@@ -9,7 +9,10 @@ import org.example.bookstore.dto.UpdateBookRequestDto;
 import org.example.bookstore.exception.EntityNotFoundException;
 import org.example.bookstore.mapper.BookMapper;
 import org.example.bookstore.model.Book;
-import org.example.bookstore.repository.BookRepository;
+import org.example.bookstore.repository.book.BookRepository;
+import org.example.bookstore.repository.book.BookSearchParameters;
+import org.example.bookstore.repository.book.BookSpecificationBuilder;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +22,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookSpecificationBuilder bookSpecificationBuilder;
 
     @Override
     @Transactional
@@ -42,6 +46,16 @@ public class BookServiceImpl implements BookService {
                                 "Book with id " + id + " not found"));
 
         bookRepository.delete(book);
+    }
+
+    @Override
+    public List<BookDto> search(BookSearchParameters params) {
+        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
+        return bookRepository.findAll(bookSpecification)
+                .stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors
+                        .toList());
     }
 
     @Override
