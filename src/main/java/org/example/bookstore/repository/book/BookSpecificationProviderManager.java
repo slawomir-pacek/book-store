@@ -2,13 +2,13 @@ package org.example.bookstore.repository.book;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.example.bookstore.exception.SpecificationNotFoundException;
 import org.example.bookstore.model.Book;
 import org.example.bookstore.repository.SpecificationProvider;
 import org.example.bookstore.repository.SpecificationProviderManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 @Component
 public class BookSpecificationProviderManager implements SpecificationProviderManager<Book> {
 
@@ -21,6 +21,6 @@ public class BookSpecificationProviderManager implements SpecificationProviderMa
                 .filter(p -> p.getKey().equals(key))
                 .findFirst()
                 .orElseThrow(() ->
-                        new IllegalArgumentException("No specification provider for key: " + key));
+                        new SpecificationNotFoundException("No specification provider for key: " + key));
     }
 }

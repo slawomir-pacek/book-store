@@ -11,23 +11,50 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
 
-    private final SpecificationProviderManager<Book> bookSpecificationProviderManager;
+    private static final String TITLE_KEY = "title";
+    private static final String AUTHOR_KEY = "author";
+    private static final String ISBN_KEY = "isbn";
+
+    private final SpecificationProviderManager<Book>
+            bookSpecificationProviderManager;
 
     @Override
-    public Specification<Book> build(BookSearchParameters searchParameters) {
+    public Specification<Book> build(BookSearchParametersDto searchParameters) {
 
         Specification<Book> spec = Specification.allOf();
-        if (searchParameters.titles() != null && searchParameters.titles().length > 0) {
-            spec = spec.and(bookSpecificationProviderManager.getSpecificationProvider("title")
-                    .getSpecification(searchParameters.titles()));
-        }
-        if (searchParameters.authors() != null && searchParameters.authors().length > 0) {
-            spec = spec.and(bookSpecificationProviderManager.getSpecificationProvider("author")
-                    .getSpecification(searchParameters.authors()));
-        }
-        if (searchParameters.isbns() != null && searchParameters.isbns().length > 0) {
-            spec = spec.and(bookSpecificationProviderManager.getSpecificationProvider("isbn")
-                    .getSpecification(searchParameters.isbns()));
+
+        spec = addSpecificationIfPresent(
+                TITLE_KEY,
+                searchParameters.titles(),
+                spec
+        );
+
+        spec = addSpecificationIfPresent(
+                AUTHOR_KEY,
+                searchParameters.authors(),
+                spec
+        );
+
+        spec = addSpecificationIfPresent(
+                ISBN_KEY,
+                searchParameters.isbns(),
+                spec
+        );
+
+        return spec;
+    }
+
+    private Specification<Book> addSpecificationIfPresent(
+            String key,
+            String[] params,
+            Specification<Book> spec
+    ) {
+        if (params != null && params.length > 0) {
+            spec = spec.and(
+                    bookSpecificationProviderManager
+                            .getSpecificationProvider(key)
+                            .getSpecification(params)
+            );
         }
         return spec;
     }
