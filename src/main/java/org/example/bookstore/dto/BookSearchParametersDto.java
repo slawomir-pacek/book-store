@@ -1,0 +1,8 @@
+package org.example.bookstore.dto;
+
+public record BookSearchParametersDto(
+        String[] titles,
+        String[] authors,
+        String[] isbns
+) {
+}

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.BookDto;
 import org.example.bookstore.dto.CreateBookRequestDto;
 import org.example.bookstore.dto.UpdateBookRequestDto;
+import org.example.bookstore.dto.BookSearchParametersDto;
 import org.example.bookstore.service.BookService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,11 @@ public class BookController {
     @GetMapping
     public List<BookDto> getAll() {
         return bookService.findAll();
+    }
+
+    @GetMapping("/search")
+    public List<BookDto> search(BookSearchParametersDto searchParameters) {
+        return bookService.search(searchParameters);
     }
 
     @GetMapping("/{id}")
