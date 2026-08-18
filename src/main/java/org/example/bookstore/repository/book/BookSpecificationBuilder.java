@@ -1,6 +1,7 @@
 package org.example.bookstore.repository.book;
 
 import lombok.RequiredArgsConstructor;
+import org.example.bookstore.dto.BookSearchParametersDto;
 import org.example.bookstore.model.Book;
 import org.example.bookstore.repository.SpecificationBuilder;
 import org.example.bookstore.repository.SpecificationProviderManager;
@@ -9,8 +10,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
-
+public class BookSpecificationBuilder implements SpecificationBuilder<Book, BookSearchParametersDto> {
     private static final String TITLE_KEY = "title";
     private static final String AUTHOR_KEY = "author";
     private static final String ISBN_KEY = "isbn";
@@ -20,7 +20,6 @@ public class BookSpecificationBuilder implements SpecificationBuilder<Book> {
 
     @Override
     public Specification<Book> build(BookSearchParametersDto searchParameters) {
-
         Specification<Book> spec = Specification.allOf();
 
         spec = addSpecificationIfPresent(

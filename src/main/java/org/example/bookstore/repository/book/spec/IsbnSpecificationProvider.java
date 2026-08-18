@@ -13,7 +13,7 @@ public class IsbnSpecificationProvider implements SpecificationProvider<Book> {
 
     @Override
     public String getKey() {
-        return "isbn";
+        return ISBN_KEY;
     }
 
     public Specification<Book> getSpecification(String[] params) {

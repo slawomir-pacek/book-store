@@ -4,7 +4,7 @@ import java.util.List;
 import org.example.bookstore.dto.BookDto;
 import org.example.bookstore.dto.CreateBookRequestDto;
 import org.example.bookstore.dto.UpdateBookRequestDto;
-import org.example.bookstore.repository.book.BookSearchParametersDto;
+import org.example.bookstore.dto.BookSearchParametersDto;
 
 public interface BookService {
 

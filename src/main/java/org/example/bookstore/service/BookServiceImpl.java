@@ -10,7 +10,7 @@ import org.example.bookstore.exception.EntityNotFoundException;
 import org.example.bookstore.mapper.BookMapper;
 import org.example.bookstore.model.Book;
 import org.example.bookstore.repository.book.BookRepository;
-import org.example.bookstore.repository.book.BookSearchParametersDto;
+import org.example.bookstore.dto.BookSearchParametersDto;
 import org.example.bookstore.repository.book.BookSpecificationBuilder;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
