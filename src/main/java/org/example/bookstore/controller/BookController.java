@@ -3,14 +3,15 @@ package org.example.bookstore.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.BookDto;
 import org.example.bookstore.dto.BookSearchParametersDto;
 import org.example.bookstore.dto.CreateBookRequestDto;
 import org.example.bookstore.dto.UpdateBookRequestDto;
 import org.example.bookstore.service.BookService;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,14 +31,15 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books", description = "Get a list of all available books")
-    public List<BookDto> getAll(SpringDataWebProperties.Pageable pageable) {
+    public Page<BookDto> getAll(@ParameterObject Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
     @GetMapping("/search")
     @Operation(summary = "Search for some books", description = "Searching books by parameters")
-    public List<BookDto> search(BookSearchParametersDto searchParameters) {
-        return bookService.search(searchParameters);
+    public Page<BookDto> search(BookSearchParametersDto searchParameters,
+                                @ParameterObject Pageable pageable) {
+        return bookService.search(searchParameters, pageable);
     }
 
     @GetMapping("/{id}")
