@@ -12,6 +12,7 @@ import org.example.bookstore.mapper.BookMapper;
 import org.example.bookstore.model.Book;
 import org.example.bookstore.repository.book.BookRepository;
 import org.example.bookstore.repository.book.BookSpecificationBuilder;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,7 +61,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookDto> findAll() {
+    public List<BookDto> findAll(SpringDataWebProperties.Pageable pageable) {
         return bookRepository.findAll()
                 .stream()
                 .map(bookMapper::toDto)

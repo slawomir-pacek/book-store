@@ -5,10 +5,11 @@ import org.example.bookstore.dto.BookDto;
 import org.example.bookstore.dto.BookSearchParametersDto;
 import org.example.bookstore.dto.CreateBookRequestDto;
 import org.example.bookstore.dto.UpdateBookRequestDto;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 
 public interface BookService {
 
-    List<BookDto> findAll();
+    List<BookDto> findAll(SpringDataWebProperties.Pageable pageable);
 
     BookDto findById(Long id);
 
