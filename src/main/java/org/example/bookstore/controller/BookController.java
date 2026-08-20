@@ -30,32 +30,36 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    @Operation(summary = "Get all books", description = "Get a list of all available books")
+    @Operation(summary = "Get paginated list of books", description =
+            "Returns a paginated and sortable list of books")
     public Page<BookDto> getAll(@ParameterObject Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
     @GetMapping("/search")
-    @Operation(summary = "Search for some books", description = "Searching books by parameters")
+    @Operation(summary = "Search books using filters", description =
+            "Search books by parameters with pagination and sorting")
     public Page<BookDto> search(BookSearchParametersDto searchParameters,
                                 @ParameterObject Pageable pageable) {
         return bookService.search(searchParameters, pageable);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Search books by id", description = "Searching books by given id")
+    @Operation(summary = "Get book by ID", description = "Retrieve a book using its ID")
     public BookDto getBookById(@PathVariable Long id) {
         return bookService.findById(id);
     }
 
     @PostMapping
-    @Operation(summary = "Create a new book", description = "Create a new book")
+    @Operation(summary = "Create a new book", description =
+            "Create a new book using validated request data")
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookDto) {
         return bookService.save(bookDto);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Updating some value of book", description = "Updating some value of book")
+    @Operation(summary = "Update an existing book", description =
+            "Update book details by ID using validated request data")
     public BookDto updateBook(
             @PathVariable Long id,
             @RequestBody @Valid UpdateBookRequestDto bookDto) {
@@ -63,7 +67,8 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Delete book by id", description = "Delete book by id")
+    @Operation(summary = "Delete book by ID", description =
+            "Permanently delete a book using its ID")
     public void deleteBook(@PathVariable Long id) {
         bookService.deleteById(id);
     }
