@@ -2,7 +2,7 @@ package org.example.bookstore.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import java.lang.reflect.Field;
+import org.springframework.beans.BeanWrapperImpl;
 
 public class FieldMatchValidator
         implements ConstraintValidator<FieldMatch, Object> {
@@ -19,27 +19,17 @@ public class FieldMatchValidator
     @Override
     public boolean isValid(Object value,
                            ConstraintValidatorContext context) {
-        try {
-            Field firstField = value.getClass()
-                    .getDeclaredField(first);
 
-            Field secondField = value.getClass()
-                    .getDeclaredField(second);
+        Object firstValue = new BeanWrapperImpl(value)
+                .getPropertyValue(first);
 
-            firstField.setAccessible(true);
-            secondField.setAccessible(true);
+        Object secondValue = new BeanWrapperImpl(value)
+                .getPropertyValue(second);
 
-            Object firstValue = firstField.get(value);
-            Object secondValue = secondField.get(value);
-
-            if (firstValue == null) {
-                return secondValue == null;
-            }
-
-            return firstValue.equals(secondValue);
-
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            return false;
+        if (firstValue == null && secondValue == null) {
+            return true;
         }
+
+        return firstValue != null && firstValue.equals(secondValue);
     }
 }

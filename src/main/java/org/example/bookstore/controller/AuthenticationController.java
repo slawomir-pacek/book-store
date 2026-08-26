@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.user.UserRegistrationRequestDto;
 import org.example.bookstore.dto.user.UserResponseDto;
-import org.example.bookstore.exception.RegistrationException;
 import org.example.bookstore.service.user.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +19,7 @@ public class AuthenticationController {
 
     @PostMapping("/registration")
     public UserResponseDto register(@RequestBody @Valid
-            UserRegistrationRequestDto requestDto) throws RegistrationException {
+            UserRegistrationRequestDto requestDto) {
 
         return userService.register(requestDto);
     }
