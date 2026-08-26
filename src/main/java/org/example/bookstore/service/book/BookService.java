@@ -1,9 +1,9 @@
-package org.example.bookstore.service;
+package org.example.bookstore.service.book;
 
-import org.example.bookstore.dto.BookDto;
-import org.example.bookstore.dto.BookSearchParametersDto;
-import org.example.bookstore.dto.CreateBookRequestDto;
-import org.example.bookstore.dto.UpdateBookRequestDto;
+import org.example.bookstore.dto.book.BookDto;
+import org.example.bookstore.dto.book.BookSearchParametersDto;
+import org.example.bookstore.dto.book.CreateBookRequestDto;
+import org.example.bookstore.dto.book.UpdateBookRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,4 +1,4 @@
-package org.example.bookstore.dto;
+package org.example.bookstore.dto.book;
 
 import java.math.BigDecimal;
 import lombok.Getter;
@@ -6,8 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookDto {
-    private Long id;
+public class UpdateBookRequestDto {
     private String title;
     private String author;
     private String isbn;
