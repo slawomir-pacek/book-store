@@ -30,14 +30,14 @@ databaseChangeLog:
             columns:
               - column:
                   name: name
-                  value: ROLE_USER
+                  value: USER
 
         - insert:
             tableName: roles
             columns:
               - column:
                   name: name
-                  value: ROLE_ADMIN
+                  value: ADMIN
 
   - changeSet:
       id: create-user-roles-table
@@ -87,7 +87,7 @@ databaseChangeLog:
               SELECT u.id, r.id
               FROM users u
               CROSS JOIN roles r
-              WHERE r.name = 'ROLE_USER';
+              WHERE r.name = 'USER';
 
   - changeSet:
       id: assign-admin-role
@@ -99,5 +99,5 @@ databaseChangeLog:
               SELECT MIN(u.id), r.id
               FROM users u
               CROSS JOIN roles r
-              WHERE r.name = 'ROLE_ADMIN'
+              WHERE r.name = 'ADMIN'
               GROUP BY r.id;
