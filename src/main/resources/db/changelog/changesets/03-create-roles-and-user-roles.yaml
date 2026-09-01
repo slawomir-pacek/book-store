@@ -1,0 +1,103 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-roles-table
+      author: slawomir
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: insert-roles
+      author: slawomir
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: USER
+
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ADMIN
+
+  - changeSet:
+      id: create-user-roles-table
+      author: slawomir
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: role_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+        - addPrimaryKey:
+            tableName: user_roles
+            columnNames: user_id, role_id
+            constraintName: pk_user_roles
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_user_roles_user
+
+        - addForeignKeyConstraint:
+            baseTableName: user_roles
+            baseColumnNames: role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+            constraintName: fk_user_roles_role
+
+  - changeSet:
+      id: assign-user-role
+      author: slawomir
+      changes:
+        - sql:
+            sql: >
+              INSERT INTO user_roles (user_id, role_id)
+              SELECT u.id, r.id
+              FROM users u
+              CROSS JOIN roles r
+              WHERE r.name = 'USER';
+
+  - changeSet:
+      id: assign-admin-role
+      author: slawomir
+      changes:
+        - sql:
+            sql: >
+              INSERT INTO user_roles (user_id, role_id)
+              SELECT MIN(u.id), r.id
+              FROM users u
+              CROSS JOIN roles r
+              WHERE r.name = 'ADMIN'
+              GROUP BY r.id;
