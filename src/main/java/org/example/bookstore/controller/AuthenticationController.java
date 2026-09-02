@@ -1,5 +1,6 @@
 package org.example.bookstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.user.UserLoginRequestDto;
@@ -22,6 +23,10 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
+    @Operation(
+            summary = "User login",
+            description = "Authenticates the user and returns a JWT token"
+    )
     public UserLoginResponseDto login(
             @RequestBody @Valid UserLoginRequestDto request
     ) {
@@ -29,6 +34,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registration")
+    @Operation(
+            summary = "User registration",
+            description = "Creates a new user account"
+    )
     public UserResponseDto register(
             @RequestBody @Valid UserRegistrationRequestDto requestDto
     ) {
