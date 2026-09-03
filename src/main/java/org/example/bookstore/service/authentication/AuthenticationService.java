@@ -7,8 +7,8 @@ import org.example.bookstore.dto.user.UserLoginResponseDto;
 import org.example.bookstore.exception.InvalidCredentialsException;
 import org.example.bookstore.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +30,7 @@ public class AuthenticationService {
                     )
             );
 
-        } catch (DisabledException e) {
+        } catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Invalid email or password");
         }
         String token = jwtUtil.generateToken(email);
