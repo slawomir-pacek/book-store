@@ -43,6 +43,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
+            if (!email.equals(userDetails.getUsername())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             Authentication currentAuthentication =
                     SecurityContextHolder.getContext().getAuthentication();
 
