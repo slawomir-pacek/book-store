@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import org.example.bookstore.dto.category.CategoryDto;
+import org.example.bookstore.dto.category.CreateCategoryRequestDto;
+import org.example.bookstore.dto.category.UpdateCategoryRequestDto;
 import org.example.bookstore.service.category.CategoryService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -41,8 +43,8 @@ public class CategoryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(
-            @Valid @RequestBody CategoryDto categoryDto) {
-        return categoryService.save(categoryDto);
+            @Valid @RequestBody CreateCategoryRequestDto createCategoryRequestDto) {
+        return categoryService.save(createCategoryRequestDto);
     }
 
     @Operation(
@@ -73,8 +75,8 @@ public class CategoryController {
     @PutMapping("/{id}")
     public CategoryDto updateCategory(
             @PathVariable Long id,
-            @Valid @RequestBody CategoryDto categoryDto) {
-        return categoryService.update(id, categoryDto);
+            @Valid @RequestBody UpdateCategoryRequestDto updateCategoryRequestDto) {
+        return categoryService.update(id, updateCategoryRequestDto);
     }
 
     @Operation(

@@ -3,6 +3,8 @@ package org.example.bookstore.service.category;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import org.example.bookstore.dto.category.CategoryDto;
+import org.example.bookstore.dto.category.CreateCategoryRequestDto;
+import org.example.bookstore.dto.category.UpdateCategoryRequestDto;
 import org.example.bookstore.exception.EntityNotFoundException;
 import org.example.bookstore.mapper.BookMapper;
 import org.example.bookstore.mapper.CategoryMapper;
@@ -43,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto save(CategoryDto categoryDto) {
+    public CategoryDto save(CreateCategoryRequestDto categoryDto) {
         Category category = categoryMapper.toEntity(categoryDto);
         Category savedCategory = categoryRepository.save(category);
 
@@ -52,7 +54,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto update(Long id, CategoryDto categoryDto) {
+    public CategoryDto update(
+            Long id,
+            UpdateCategoryRequestDto categoryDto) {
+
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
@@ -81,6 +86,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(
             Long categoryId, Pageable pageable) {
+
+        categoryRepository.findById(categoryId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Category with id " + categoryId + " not found"));
+
         return bookRepository.findAllByCategoriesId(categoryId, pageable)
                 .map(bookMapper::toDtoWithoutCategories);
     }
