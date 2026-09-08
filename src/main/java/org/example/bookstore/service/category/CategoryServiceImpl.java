@@ -1,8 +1,7 @@
 package org.example.bookstore.service.category;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstore.dto.book.BookDtoWithoutCategoryId;
+import org.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import org.example.bookstore.dto.category.CategoryDto;
 import org.example.bookstore.exception.EntityNotFoundException;
 import org.example.bookstore.mapper.BookMapper;
@@ -10,6 +9,8 @@ import org.example.bookstore.mapper.CategoryMapper;
 import org.example.bookstore.model.Category;
 import org.example.bookstore.repository.book.BookRepository;
 import org.example.bookstore.repository.category.CategoryRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,17 +25,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryDto> findAll() {
-        return categoryRepository.findAllActive()
-                .stream()
-                .map(categoryMapper::toDto)
-                .toList();
+    public Page<CategoryDto> findAll(Pageable pageable) {
+        return categoryRepository.findAll(pageable)
+                .map(categoryMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public CategoryDto getById(Long id) {
-        Category category = categoryRepository.findActiveById(id)
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
                                 "Category with id " + id + " not found"));
@@ -54,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto update(Long id, CategoryDto categoryDto) {
-        Category category = categoryRepository.findActiveById(id)
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
                                 "Category with id " + id + " not found"));
@@ -70,22 +69,19 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        Category category = categoryRepository.findActiveById(id)
+        Category category = categoryRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
                                 "Category with id " + id + " not found"));
 
-        category.setIsDeleted(true);
-        categoryRepository.save(category);
+        categoryRepository.delete(category);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookDtoWithoutCategoryId> getBooksByCategoryId(
-            Long categoryId) {
-        return bookRepository.findAllByCategoryId(categoryId)
-                .stream()
-                .map(bookMapper::toDtoWithoutCategories)
-                .toList();
+    public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(
+            Long categoryId, Pageable pageable) {
+        return bookRepository.findAllByCategoriesId(categoryId, pageable)
+                .map(bookMapper::toDtoWithoutCategories);
     }
 }

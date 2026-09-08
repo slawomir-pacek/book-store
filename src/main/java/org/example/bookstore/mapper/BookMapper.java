@@ -1,7 +1,7 @@
 package org.example.bookstore.mapper;
 
 import org.example.bookstore.dto.book.BookDto;
-import org.example.bookstore.dto.book.BookDtoWithoutCategoryId;
+import org.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import org.example.bookstore.dto.book.CreateBookRequestDto;
 import org.example.bookstore.dto.book.UpdateBookRequestDto;
 import org.example.bookstore.model.Book;
@@ -15,7 +15,7 @@ public interface BookMapper {
 
     Book toEntity(CreateBookRequestDto requestDto);
 
-    BookDtoWithoutCategoryId toDtoWithoutCategories(Book book);
+    BookDtoWithoutCategoryIds toDtoWithoutCategories(Book book);
 
     void updateBookFromDto(UpdateBookRequestDto dto, @MappingTarget Book book);
 }

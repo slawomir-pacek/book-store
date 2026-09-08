@@ -3,12 +3,15 @@ package org.example.bookstore.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.example.bookstore.dto.book.BookDtoWithoutCategoryId;
+import org.example.bookstore.dto.book.BookDtoWithoutCategoryIds;
 import org.example.bookstore.dto.category.CategoryDto;
 import org.example.bookstore.service.category.CategoryService;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +37,7 @@ public class CategoryController {
             summary = "Create a new category",
             description = "Creates a new book category"
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(
@@ -45,15 +49,17 @@ public class CategoryController {
             summary = "Get all categories",
             description = "Returns a list of all available book categories"
     )
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
-    public List<CategoryDto> getAll() {
-        return categoryService.findAll();
+    public Page<CategoryDto> getAll(@ParameterObject Pageable pageable) {
+        return categoryService.findAll(pageable);
     }
 
     @Operation(
             summary = "Get category by ID",
             description = "Returns a book category with the specified ID"
     )
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public CategoryDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
@@ -63,6 +69,7 @@ public class CategoryController {
             summary = "Update a category",
             description = "Updates an existing book category with the specified ID"
     )
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public CategoryDto updateCategory(
             @PathVariable Long id,
@@ -75,6 +82,7 @@ public class CategoryController {
             description = "Deletes the book category with the specified ID"
     )
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
@@ -85,8 +93,10 @@ public class CategoryController {
             description = "Returns all books assigned to the category with the specified ID"
     )
     @GetMapping("/{id}/books")
-    public List<BookDtoWithoutCategoryId> getBooksByCategoryId(
-            @PathVariable Long id) {
-        return categoryService.getBooksByCategoryId(id);
+    public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(
+            @PathVariable Long id,
+            @ParameterObject Pageable pageable) {
+
+        return categoryService.getBooksByCategoryId(id, pageable);
     }
 }
