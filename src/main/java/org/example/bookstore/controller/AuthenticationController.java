@@ -38,7 +38,7 @@ public class AuthenticationController {
         return authenticationService.login(request);
     }
 
-    @PostMapping("/registration")
+    @PostMapping("/register")
     @Operation(
             summary = "User registration",
             description = "Creates a new user account"

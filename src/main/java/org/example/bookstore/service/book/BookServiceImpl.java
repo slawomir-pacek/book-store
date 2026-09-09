@@ -1,5 +1,7 @@
 package org.example.bookstore.service.book;
 
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstore.dto.book.BookDto;
 import org.example.bookstore.dto.book.BookSearchParametersDto;
@@ -8,8 +10,10 @@ import org.example.bookstore.dto.book.UpdateBookRequestDto;
 import org.example.bookstore.exception.EntityNotFoundException;
 import org.example.bookstore.mapper.BookMapper;
 import org.example.bookstore.model.Book;
+import org.example.bookstore.model.Category;
 import org.example.bookstore.repository.book.BookRepository;
 import org.example.bookstore.repository.book.BookSpecificationBuilder;
+import org.example.bookstore.repository.category.CategoryRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -23,14 +27,23 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final BookSpecificationBuilder bookSpecificationBuilder;
+    private final CategoryRepository categoryRepository;
 
     @Override
     @Transactional
-    public BookDto update(Long id, UpdateBookRequestDto bookDto) {
+    public BookDto update(Long id, UpdateBookRequestDto requestDto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() ->
                         new EntityNotFoundException(
                                 "Book with id " + id + " not found"));
+
+        bookMapper.updateBookFromDto(requestDto, book);
+
+        Set<Category> categories = new HashSet<>(
+                categoryRepository.findAllById(requestDto.getCategoryIds())
+        );
+
+        book.setCategories(categories);
 
         Book updatedBook = bookRepository.save(book);
 
@@ -77,6 +90,13 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookDto save(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toEntity(requestDto);
+
+        Set<Category> categories = new HashSet<>(
+                categoryRepository.findAllById(requestDto.getCategoryIds())
+        );
+
+        book.setCategories(categories);
+
         Book savedBook = bookRepository.save(book);
 
         return bookMapper.toDto(savedBook);

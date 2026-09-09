@@ -94,6 +94,7 @@ public class CategoryController {
             summary = "Get books by category",
             description = "Returns all books assigned to the category with the specified ID"
     )
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}/books")
     public Page<BookDtoWithoutCategoryIds> getBooksByCategoryId(
             @PathVariable Long id,
