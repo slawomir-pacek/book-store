@@ -7,7 +7,7 @@ import org.example.bookstore.validation.FieldMatch;
 
 @FieldMatch(
         first = "password",
-        second = "repeatedPassword",
+        second = "repeatPassword",
         message = "Passwords must match"
 )
 public record UserRegistrationRequestDto(
