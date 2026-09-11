@@ -8,8 +8,10 @@ import org.example.bookstore.dto.user.UserResponseDto;
 import org.example.bookstore.exception.RegistrationException;
 import org.example.bookstore.mapper.UserMapper;
 import org.example.bookstore.model.Role;
+import org.example.bookstore.model.ShoppingCart;
 import org.example.bookstore.model.User;
 import org.example.bookstore.repository.RoleRepository;
+import org.example.bookstore.repository.cart.ShoppingCartRepository;
 import org.example.bookstore.repository.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request) {
@@ -44,6 +47,10 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Set.of(userRole));
 
         User savedUser = userRepository.save(user);
+
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(savedUser);
+        shoppingCartRepository.save(shoppingCart);
 
         return userMapper.toDto(savedUser);
     }
