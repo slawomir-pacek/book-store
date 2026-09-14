@@ -33,5 +33,5 @@ public class ShoppingCart {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private Set<CartItem> cartItemSet = new HashSet<>();
+    private Set<CartItem> cartItems = new HashSet<>();
 }

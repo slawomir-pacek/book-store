@@ -1,5 +1,6 @@
 package org.example.bookstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
+    @Operation(summary = "Get the current user's shopping cart")
     @PreAuthorize("hasRole('USER')")
     @GetMapping
     public ShoppingCartResponseDto getShoppingCart(
@@ -37,6 +39,7 @@ public class ShoppingCartController {
         return shoppingCartService.getShoppingCart(user);
     }
 
+    @Operation(summary = "Add a book to the shopping cart")
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -47,6 +50,7 @@ public class ShoppingCartController {
         return shoppingCartService.addCartItem(user, request);
     }
 
+    @Operation(summary = "Update a shopping-cart item quantity")
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/cart-items/{cartItemId}")
     public CartItemResponseDto updateCartItem(
@@ -57,6 +61,7 @@ public class ShoppingCartController {
         return shoppingCartService.updateCartItem(user, cartItemId, request);
     }
 
+    @Operation(summary = "Remove an item from the shopping cart")
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/cart-items/{cartItemId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
