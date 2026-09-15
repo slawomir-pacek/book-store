@@ -20,11 +20,15 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.bookstore.Status;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "orders")
+@SQLDelete(sql = "UPDATE orders SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,4 +57,7 @@ public class Order {
             orphanRemoval = true
     )
     private Set<OrderItem> orderItems = new HashSet<>();
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }

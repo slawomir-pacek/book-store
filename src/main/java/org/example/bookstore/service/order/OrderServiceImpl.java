@@ -22,6 +22,8 @@ import org.example.bookstore.repository.cart.ShoppingCartRepository;
 import org.example.bookstore.repository.order.OrderItemRepository;
 import org.example.bookstore.repository.order.OrderRepository;
 import org.example.bookstore.repository.user.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,10 +68,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDto> getOrdersHistory(Long userId) {
-        return orderRepository.findAllByUserId(userId).stream()
-                .map(orderMapper::toDto)
-                .toList();
+    public Page<OrderDto> getOrdersHistory(Long userId, Pageable pageable) {
+        return orderRepository.findAllByUserId(userId, pageable)
+                .map(orderMapper::toDto);
     }
 
     @Override
