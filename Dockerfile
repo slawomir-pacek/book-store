@@ -1,9 +1,13 @@
-FROM eclipse-temurin:17-jdk
-
+# Build stage
+# Build stage
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
 
-COPY target/book-store-*.jar app.jar
-
+# Run stage
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=builder /app/target/book-store-*.jar app.jar
 EXPOSE 8080
-
 ENTRYPOINT ["java", "-jar", "app.jar"]
