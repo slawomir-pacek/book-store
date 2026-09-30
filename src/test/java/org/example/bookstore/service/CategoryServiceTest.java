@@ -75,7 +75,7 @@ class CategoryServiceTest {
         Category secondCategory = new Category();
         secondCategory.setId(2L);
 
-        CategoryDto secondCategoryDto = new CategoryDto(2L,"Science Fiction",
+        CategoryDto secondCategoryDto = new CategoryDto(2L, "Science Fiction",
                 "Science fiction books");
 
         Page<Category> categoryPage =
@@ -131,13 +131,14 @@ class CategoryServiceTest {
 
     @Test
     void save_shouldMapSaveAndReturnCategory() {
-        CreateCategoryRequestDto requestDto =
-                new CreateCategoryRequestDto("Fantasy","Fantasy books");
 
         Category savedCategory = new Category();
         savedCategory.setId(1L);
         savedCategory.setName("Fantasy");
         savedCategory.setDescription("Fantasy books");
+
+        CreateCategoryRequestDto requestDto =
+                new CreateCategoryRequestDto("Fantasy","Fantasy books");
 
         when(categoryMapper.toEntity(requestDto)).thenReturn(category);
 
@@ -156,8 +157,6 @@ class CategoryServiceTest {
 
     @Test
     void update_shouldUpdateSaveAndReturnCategory() {
-        UpdateCategoryRequestDto requestDto =
-                new UpdateCategoryRequestDto("Updated Fantasy","Updated description");
 
         Category updatedCategory = new Category();
         updatedCategory.setId(1L);
@@ -169,6 +168,9 @@ class CategoryServiceTest {
         when(categoryRepository.save(category)).thenReturn(updatedCategory);
 
         when(categoryMapper.toDto(updatedCategory)).thenReturn(categoryDto);
+
+        UpdateCategoryRequestDto requestDto =
+                new UpdateCategoryRequestDto("Updated Fantasy","Updated description");
 
         CategoryDto result = categoryService.update(1L, requestDto);
 
@@ -252,7 +254,7 @@ class CategoryServiceTest {
                         "image2.jpg"
                 );
 
-        Page<Book> bookPage = new PageImpl<>(List.of(book, secondBook), pageable,2);
+        Page<Book> bookPage = new PageImpl<>(List.of(book, secondBook), pageable, 2);
 
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
 

@@ -1,34 +1,53 @@
 package org.example.bookstore.controller;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.List;
 import org.example.bookstore.dto.book.BookDto;
 import org.example.bookstore.dto.book.BookSearchParametersDto;
 import org.example.bookstore.dto.book.CreateBookRequestDto;
 import org.example.bookstore.dto.book.UpdateBookRequestDto;
+import org.example.bookstore.security.JwtUtil;
 import org.example.bookstore.service.book.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(BookController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class BookControllerTest {
-    @Mock
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
     private BookService bookService;
 
-    @InjectMocks
-    private BookController bookController;
+    @MockitoBean
+    private JwtUtil jwtUtil;
 
     private Pageable pageable;
     private BookDto bookDto;
@@ -36,105 +55,132 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         pageable = PageRequest.of(0, 10);
+
         bookDto = new BookDto();
         bookDto.setId(1L);
     }
 
     @Test
-    void getAll_shouldReturnBooks() {
+    @WithMockUser(roles = "USER")
+    void getAll_shouldReturnBooks() throws Exception {
         // given
-        Page<BookDto> expected = new PageImpl<>(List.of(bookDto));
+        Page<BookDto> expected = new PageImpl<>(List.of(bookDto), pageable,1);
 
         when(bookService.findAll(pageable)).thenReturn(expected);
 
-        // when
-        Page<BookDto> actual = bookController.getAll(pageable);
+        // when + then
+        mockMvc.perform(get("/api/books")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1));
 
-        // then
-        assertSame(expected, actual);
         verify(bookService).findAll(pageable);
     }
 
     @Test
-    void search_shouldReturnBooks() {
+    @WithMockUser(roles = "USER")
+    void search_shouldReturnBooks() throws Exception {
         // given
-        BookSearchParametersDto searchParameters = new BookSearchParametersDto(null, null, null);
+        Page<BookDto> expected = new PageImpl<>(
+                List.of(bookDto),
+                pageable,
+                1
+        );
 
-        Page<BookDto> expected = new PageImpl<>(List.of(bookDto));
+        when(bookService.search(
+                any(BookSearchParametersDto.class),
+                eq(pageable)
+        )).thenReturn(expected);
 
-        when(bookService.search(searchParameters, pageable)).thenReturn(expected);
+        // when + then
+        mockMvc.perform(get("/api/books/search")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1));
 
-        // when
-        Page<BookDto> actual = bookController.search(searchParameters, pageable);
-
-        //then
-        assertSame(expected, actual);
-        verify(bookService).search(searchParameters, pageable);
+        verify(bookService).search(
+                any(BookSearchParametersDto.class),
+                eq(pageable)
+        );
     }
 
     @Test
-    void getBookById_shouldReturnBook() {
+    @WithMockUser(roles = "USER")
+    void getBookById_shouldReturnBook() throws Exception {
         // given
         Long id = 1L;
-        //BookDto bookDto = new BookDto(); - to już mam z kodu na górze
-        //bookDto.setId(id); - to już mam z kodu na górze
 
         when(bookService.findById(id)).thenReturn(bookDto);
 
-        // when
-        BookDto actual = bookController.getBookById(id); // - prawdziwe wykonanie kodu
+        // when + then
+        mockMvc.perform(get("/api/books/{id}", id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
 
-        // then
-        assertSame(bookDto, actual);
         verify(bookService).findById(id);
     }
 
     @Test
-    void createBook_shouldReturnsBook() {
+    @WithMockUser(roles = "ADMIN")
+    void createBook_shouldReturnBook() throws Exception {
         // given
-        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setAuthor("Jam to napisał");
-        createBookRequestDto.setIsbn("123456789");
-        createBookRequestDto.setTitle("Chemia podstawy");
-        createBookRequestDto.setPrice(BigDecimal.valueOf(60));
+        CreateBookRequestDto request = new CreateBookRequestDto();
+        request.setAuthor("Jam to napisał");
+        request.setIsbn("123456789");
+        request.setTitle("Chemia podstawy");
+        request.setPrice(BigDecimal.valueOf(60));
 
-        when(bookService.save(createBookRequestDto)).thenReturn(bookDto);
-        //BookDto bookDto = new BookDto(); - to już mam z kodu na górze
-        //bookDto.setId(id); - to już mam z kodu na górze
+        when(bookService.save(any(CreateBookRequestDto.class)))
+                .thenReturn(bookDto);
 
-        // when
-        BookDto actual = bookController.createBook(createBookRequestDto);
+        // when + then
+        mockMvc.perform(post("/api/books")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
 
-        // then
-        assertSame(bookDto, actual);
-        verify(bookService).save(createBookRequestDto);
+        verify(bookService).save(any(CreateBookRequestDto.class));
     }
 
     @Test
-    void updateBook_shouldReturnsBook() {
+    @WithMockUser(roles = "ADMIN")
+    void updateBook_shouldReturnBook() throws Exception {
         // given
         Long id = 1L;
-        UpdateBookRequestDto updateBookRequestDto = new UpdateBookRequestDto();
 
-        when(bookService.update(id, updateBookRequestDto)).thenReturn(bookDto);
+        UpdateBookRequestDto request = new UpdateBookRequestDto();
 
-        // when
-        BookDto actual = bookController.updateBook(id, updateBookRequestDto);
+        when(bookService.update(
+                eq(id),
+                any(UpdateBookRequestDto.class)
+        )).thenReturn(bookDto);
 
-        // then
-        assertSame(bookDto, actual);
-        verify(bookService).update(id, updateBookRequestDto);
+        // when + then
+        mockMvc.perform(put("/api/books/{id}", id)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1));
+
+        verify(bookService).update(
+                eq(id),
+                any(UpdateBookRequestDto.class)
+        );
     }
 
     @Test
-    void deleteBook_shouldCallService() {
+    @WithMockUser(roles = "ADMIN")
+    void deleteBook_shouldCallService() throws Exception {
         // given
         Long id = 1L;
 
-        // when
-        bookController.deleteBook(id);
+        // when + then
+        mockMvc.perform(delete("/api/books/{id}", id))
+                .andExpect(status().isOk());
 
-        // then
-        verify(bookService).deleteById(bookDto.getId());
+        verify(bookService).deleteById(id);
     }
 }

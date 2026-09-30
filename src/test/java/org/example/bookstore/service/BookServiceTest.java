@@ -104,7 +104,7 @@ class BookServiceTest {
 
         BookDto secondBookDto = new BookDto();
 
-        Page<Book> bookPage = new PageImpl<>(List.of(book, secondBook), pageable,2);
+        Page<Book> bookPage = new PageImpl<>(List.of(book, secondBook), pageable, 2);
 
         when(bookRepository.findAll(pageable)).thenReturn(bookPage);
         when(bookMapper.toDto(book)).thenReturn(bookDto);
@@ -129,7 +129,7 @@ class BookServiceTest {
         Specification<Book> specification = (root, query, criteriaBuilder) ->
                 criteriaBuilder.conjunction();
 
-        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable,1);
+        Page<Book> bookPage = new PageImpl<>(List.of(book), pageable, 1);
 
         when(bookSpecificationBuilder.build(params)).thenReturn(specification);
         when(bookRepository.findAll(specification, pageable)).thenReturn(bookPage);
@@ -151,8 +151,8 @@ class BookServiceTest {
         requestDto.setCategoryIds(Set.of(1L));
 
         when(bookMapper.toEntity(requestDto)).thenReturn(book);
-        when(categoryRepository.findAllById(requestDto.getCategoryIds())).
-                thenReturn(List.of(category));
+        when(categoryRepository.findAllById(requestDto.getCategoryIds()))
+                .thenReturn(List.of(category));
         when(bookRepository.save(book)).thenReturn(book);
         when(bookMapper.toDto(book)).thenReturn(bookDto);
 
@@ -173,8 +173,8 @@ class BookServiceTest {
         requestDto.setCategoryIds(Set.of(1L));
 
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(categoryRepository.findAllById(requestDto.getCategoryIds())).
-                thenReturn(List.of(category));
+        when(categoryRepository.findAllById(requestDto.getCategoryIds()))
+                .thenReturn(List.of(category));
         when(bookRepository.save(book)).thenReturn(book);
         when(bookMapper.toDto(book)).thenReturn(bookDto);
 
@@ -230,5 +230,60 @@ class BookServiceTest {
 
         verify(bookRepository).findById(1L);
         verify(bookRepository, never()).delete(any(Book.class));
+    }
+
+    @Test
+    void save_shouldThrowException_whenCategoryDoesNotExist() {
+        CreateBookRequestDto requestDto = new CreateBookRequestDto();
+        requestDto.setCategoryIds(Set.of(1L, 999L));
+
+        when(bookMapper.toEntity(requestDto))
+                .thenReturn(book);
+
+        when(categoryRepository.findAllById(
+                requestDto.getCategoryIds()))
+                .thenReturn(List.of(category));
+
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> bookService.save(requestDto)
+        );
+
+        verify(bookMapper).toEntity(requestDto);
+        verify(categoryRepository)
+                .findAllById(requestDto.getCategoryIds());
+        verify(bookRepository, never())
+                .save(any());
+        verify(bookMapper, never())
+                .toDto(any());
+    }
+
+    @Test
+    void update_shouldThrowException_whenCategoryDoesNotExist() {
+        UpdateBookRequestDto requestDto =
+                new UpdateBookRequestDto();
+        requestDto.setCategoryIds(Set.of(1L, 999L));
+
+        when(bookRepository.findById(1L))
+                .thenReturn(Optional.of(book));
+
+        when(categoryRepository.findAllById(
+                requestDto.getCategoryIds()))
+                .thenReturn(List.of(category));
+
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> bookService.update(1L, requestDto)
+        );
+
+        verify(bookRepository).findById(1L);
+        verify(bookMapper)
+                .updateBookFromDto(requestDto, book);
+        verify(categoryRepository)
+                .findAllById(requestDto.getCategoryIds());
+        verify(bookRepository, never())
+                .save(any());
+        verify(bookMapper, never())
+                .toDto(any());
     }
 }
