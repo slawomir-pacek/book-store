@@ -29,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -137,9 +138,9 @@ class BookControllerTest {
 
         // when + then
         mockMvc.perform(post("/api/books")
-                        .contentType("application/json")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1));
 
         verify(bookService).save(any(CreateBookRequestDto.class));
@@ -179,7 +180,7 @@ class BookControllerTest {
 
         // when + then
         mockMvc.perform(delete("/api/books/{id}", id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(bookService).deleteById(id);
     }
