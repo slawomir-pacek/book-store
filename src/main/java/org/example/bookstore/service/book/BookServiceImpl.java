@@ -43,6 +43,11 @@ public class BookServiceImpl implements BookService {
                 categoryRepository.findAllById(requestDto.getCategoryIds())
         );
 
+        if (categories.size() != requestDto.getCategoryIds().size()) {
+            throw new EntityNotFoundException(
+                    "One or more categories not found");
+        }
+
         book.setCategories(categories);
 
         Book updatedBook = bookRepository.save(book);
@@ -94,6 +99,11 @@ public class BookServiceImpl implements BookService {
         Set<Category> categories = new HashSet<>(
                 categoryRepository.findAllById(requestDto.getCategoryIds())
         );
+
+        if (categories.size() != requestDto.getCategoryIds().size()) {
+            throw new EntityNotFoundException(
+                    "One or more categories not found");
+        }
 
         book.setCategories(categories);
 
