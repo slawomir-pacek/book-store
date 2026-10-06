@@ -1,6 +1,7 @@
 package org.example.bookstore.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 @Tag(name = "Order management", description = "Endpoints for managing orders")
+@SecurityRequirement(name = "bearerAuth")
 public class OrderController {
     private final OrderService orderService;
 
