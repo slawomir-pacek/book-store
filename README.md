@@ -1,66 +1,66 @@
 README.md
 
-## Book Store API
+# 📚 Book Store API
 
-<p align="center"> <strong>REST API for an online bookstore built with Java, Spring
+![Java](https://img.shields.io/badge/Java-17-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen?logo=springboot)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)
+![AWS](https://img.shields.io/badge/AWS-EC2%20%7C%20RDS%20%7C%20ECR-orange?logo=amazonaws)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+![Liquibase](https://img.shields.io/badge/Liquibase-Database%20Migration-2962FF)
+![JWT](https://img.shields.io/badge/JWT-Authentication-purple)
 
-Boot, Spring Security, MySQL, Docker and AWS.</strong> </p>
+> REST API for an online bookstore built with Java and Spring Boot.
+> 
+> ## 📸 Screenshots
 
-<p align="center"> <img src="https://img.shields.io/badge/Java-17-orange? logo=openjdk" alt="Java 17"> <img src="https://img.shields.io/badge/Spring%20Boot-3.5.4-brightgreen? logo=springboot" alt="Spring Boot"> <img src="https://img.shields.io/badge/Spring%20Security-JWT-green? logo=springsecurity" alt="Spring Security"> <img src="https://img.shields.io/badge/MySQL-8-blue?logo=mysql" alt="MySQL"> <img src="https://img.shields.io/badge/Docker-Containerized-blue?logo=docker" alt="Docker"> <img src="https://img.shields.io/badge/AWS-Deployed-orange? [URL 🔗](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+### Swagger UI
 
-logo=amazonaws" alt="AWS"> </p> [URL 🔗](https://img.shields.io/badge/AWS-Deployed-orange?logo=amazonaws)
+![Swagger UI](./screenshots/swagger.png)
+
+### JWT Authorization
+
+![JWT Authorization](./screenshots/Authorize.png)
+
+### API Response
+
+![API Response](./screenshots/Response-Json.png)
+
+## 📖 About the Project
 
 ## About the Project
 
-Book Store API
+**Book Store API** is a RESTful backend application for an online bookstore.
 
 The project was created as a practical Java backend application to go beyond a simple CRUD implementation and work with technologies and concepts commonly used in commercial backend projects.
 
 The application provides:
 
 - user registration and authentication,
-
 - JWT-based authorization,
-
 - role-based access control,
-
 - book and category management,
-
 - book searching and pagination,
-
 - shopping cart functionality,
-
 - database migrations,
-
 - automated tests,
-
 - OpenAPI / Swagger documentation,
-
-is a backend REST API for an online bookstore.
-
-
 - Docker containerization,
-
 - AWS deployment.
 
 The project is divided into separate application layers:
 
+```text
 Controller
-
-↓
-
+    ↓
 Service
-
-↓
-
+    ↓
 Repository
-
-↓
-
+    ↓
 Database
+```
 
 Security is handled independently through Spring Security and a JWT authentication filter.
-
 ## Live API / Swagger
 
 The application is deployed on AWS EC2 and documented with Swagger UI.
@@ -177,507 +177,495 @@ The application uses the authenticated user rather than accepting an arbitrary u
 
 This prevents a user from simply changing a user ID in the request and accessing another user's shopping cart.
 
-## Authentication Flow
+## 🔐 Authentication Flow
 
-│
-
-
-│ Credentials OK │
-
-│
-
-│
-
-JWT token │
-
-│
-
-Authorization: Bearer <token>
-
-│
-
-│ JWT Authentication │
-
-│
-
-Filter
-
-│
-
-│
-
-│ Spring Security
-
-│
-
-│ Authentication
-
-│
-
-│
-
-│ Controller / Role │
-
-│
-
-validation
-
-│
+```text
+Client
+  │
+  │ POST /api/auth/login
+  │ username + password
+  ▼
+AuthenticationController
+  │
+  │ Credentials valid
+  ▼
+JWT Token
+  │
+  │ Authorization: Bearer <token>
+  ▼
+JWT Authentication Filter
+  │
+  │ Validate token
+  ▼
+Spring Security
+  │
+  │ Authenticate user
+  │
+  │ Check role
+  ▼
+Controller
+  │
+  ├── USER  → User endpoints
+  │
+  └── ADMIN → Admin endpoints
+```
 
 ## 🏗️ Application Architecture
 
-│
+The application follows a layered architecture:
 
-│
+```text
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Database
+```
 
+Security is handled independently through Spring Security and a JWT authentication filter.
 
 ## Main Controllers
 
-## AuthenticationController
+### AuthenticationController
 
-Base path:
+**Base path:** `/api/auth`
 
-/api/auth
+| Method | Endpoint             | Description           | Access |
+| ------ | -------------------- | --------------------- | ------ |
+| POST   | `/api/auth/register` | Register a new user   | Public |
+| POST   | `/api/auth/login`    | Login and receive JWT | Public |
 
-| Method | Endpoint | Description | Access |
-| --- | --- | --- | --- |
-| POST | /api/auth/register | Register a new user | Public |
-| POST | /api/auth/login | Login and receive JWT | Public |
+### BookController
 
-## BookController
+**Base path:** `/api/books`
 
-Base path:
-
-
-## /api/books
-
-| Method | Endpoint | Description | Access |
-| --- | --- | --- | --- |
-| GET | /api/books | Get paginated books | USER |
-| GET | /api/books/search | Search books | USER |
-| GET | /api/books/{id} | Get book by ID | USER |
-| POST | /api/books | Create book | ADMIN |
-| PUT | /api/books/{id} | Update book | ADMIN |
-| DELETE | /api/books/{id} | Delete book | ADMIN |
+| Method | Endpoint            | Description         | Access |
+| ------ | ------------------- | ------------------- | ------ |
+| GET    | `/api/books`        | Get paginated books | USER   |
+| GET    | `/api/books/search` | Search books        | USER   |
+| GET    | `/api/books/{id}`   | Get book by ID      | USER   |
+| POST   | `/api/books`        | Create book         | ADMIN  |
+| PUT    | `/api/books/{id}`   | Update book         | ADMIN  |
+| DELETE | `/api/books/{id}`   | Delete book         | ADMIN  |
 
 The controller uses validation, pagination and role-based method security.
 
-## CategoryController
+### CategoryController
 
-Base path:
+**Base path:** `/api/categories`
 
-/api/categories
+| Method | Endpoint               | Description        | Access |
+| ------ | ---------------------- | ------------------ | ------ |
+| GET    | `/api/categories`      | Get all categories | USER   |
+| POST   | `/api/categories`      | Create a category  | ADMIN  |
+| PUT    | `/api/categories/{id}` | Update a category  | ADMIN  |
+| DELETE | `/api/categories/{id}` | Delete a category  | ADMIN  |
 
-Provides category management and retrieval functionality with appropriate authentication and authorization.
+Category management is protected by authentication and role-based authorization.
 
-## ShoppingCartController
+### ShoppingCartController
 
-Base path:
+**Base path:** `/api/cart`
 
-/api/cart
+| Method | Endpoint                            | Description             | Access |
+| ------ | ----------------------------------- | ----------------------- | ------ |
+| GET    | `/api/cart`                         | Get current user's cart | USER   |
+| POST   | `/api/cart`                         | Add a book to the cart  | USER   |
+| PUT    | `/api/cart/cart-items/{cartItemId}` | Update item quantity    | USER   |
+| DELETE | `/api/cart/cart-items/{cartItemId}` | Remove an item          | USER   |
 
-| Method Endpoint GET /api/cart POST /api/cart | Description Get current user's cart Add a book to cart |
-| --- | --- |
-| PUT /api/cart/cart-items/{cartItemId} DELETE /api/cart/cart-items/{cartItemId} | Update quantity Remove item |
+The shopping cart is associated with the authenticated user.
 
+## 🛠️ Technologies
 
-| Technologies Technology Usage Java 17 Programming language Spring Boot 3.5.4 Backend framework Spring Web REST API Spring Security Authentication and authorization JWT / JJWT 0.13.0 Stateless authentication Spring Data JPA Database access Hibernate ORM MySQL 8 Relational database Liquibase 4.31.1 Database migrations H2 Test database MapStruct DTO mapping Lombok Boilerplate reduction Springdoc OpenAPI Swagger documentation JUnit Testing Mockito Unit testing MockMvc Controller testing Maven Build and dependency management Checkstyle Code quality |
-| --- |
-| Docker Containerization Docker Compose Local environment |
-
-
-AWS EC2
-
-Application hosting
-
-AWS RDS
-
-Production database
-
-Amazon ECR Public
-
-Docker image registry
+| Technology        | Version | Usage                            |
+| ----------------- | ------- | -------------------------------- |
+| Java              | 17      | Programming language             |
+| Spring Boot       | 3.5.4   | Backend framework                |
+| Spring Web        | —       | REST API                         |
+| Spring Security   | —       | Authentication and authorization |
+| JWT / JJWT        | 0.13.0  | Stateless authentication         |
+| Spring Data JPA   | —       | Database access                  |
+| Hibernate ORM     | —       | ORM / persistence                |
+| MySQL             | 8.0     | Relational database              |
+| Liquibase         | 4.31.1  | Database migrations              |
+| H2                | —       | Test database                    |
+| MapStruct         | —       | DTO mapping                      |
+| Lombok            | —       | Boilerplate reduction            |
+| Springdoc OpenAPI | 2.8.17  | Swagger / API documentation      |
+| JUnit             | —       | Testing                          |
+| Mockito           | —       | Unit testing                     |
+| MockMvc           | —       | Controller testing               |
+| Maven             | —       | Build and dependency management  |
+| Checkstyle        | —       | Code quality                     |
+| Docker            | —       | Containerization                 |
+| Docker Compose    | —       | Local development environment    |
+| AWS EC2           | —       | Application hosting              |
+| AWS RDS           | —       | Production database              |
+| Amazon ECR Public | —       | Docker image registry            |
 
 ## 🗄️ Database
 
-The project uses MySQL as the main relational database.
+The project uses **MySQL 8.0** as the main relational database.
 
 Database access is implemented using:
 
-- Spring Data JPA,
-
-- Hibernate,
-
-- JPA entity relationships,
-
-- repositories,
-
-- Liquibase migrations.
+* Spring Data JPA,
+* Hibernate,
+* JPA entity relationships,
+* repositories,
+* Liquibase migrations.
 
 Liquibase manages database changes using versioned changesets.
 
-This makes database changes reproducible across environments.
+This makes database changes reproducible across different environments.
 
-## Production architecture
+## ☁️ Production Architecture
 
+The production application is deployed to AWS using Docker on an EC2 instance and connects to an AWS RDS MySQL database.
+
+```text
 AWS EC2
-
-│
-
-│ Docker
-
+    │
+    │ Docker
+    ▼
 Book Store API
-
-│
-
-│ JDBC
-
+    │
+    │ JDBC
+    ▼
 AWS RDS
-
-│
-
+    │
+    ▼
 MySQL
+```
 
 Database credentials are supplied at runtime and should never be committed to the repository.
 
+## 🧪 Testing
 
-## Testing
+The project contains tests covering the main application layers.
 
-The project contains tests for the main application layers.
-
-## Repository tests
+### Repository Tests
 
 Repository tests verify database operations using an H2 test database.
 
-## Service tests
+### Service Tests
 
-Service tests use Mockito to isolate business logic from repositories.
+Service tests use Mockito to isolate business logic from repositories and verify service behavior.
 
-## Controller tests
+### Controller Tests
 
-REST controllers are tested using:
+REST controllers are tested using MockMvc.
 
-MockMvc
+Security-related scenarios include:
 
-Security-related scenarios are also tested, including:
+* authenticated users,
+* different user roles,
+* protected endpoints,
+* CSRF handling where required,
+* service interactions.
 
-- authenticated users,
+### Run Tests
 
-- different roles,
+Run all tests:
 
-- protected endpoints,
-
-- CSRF handling where required,
-
-- service interactions.
-
-## Run all tests:
-
+```bash
 ./mvnw test
+```
 
 On Windows:
 
+```powershell
 .\mvnw.cmd test
+```
 
 Run the full Maven verification:
 
+```bash
 ./mvnw clean verify
+```
 
-## Swagger / OpenAPI
+## 📖 Swagger / OpenAPI
 
-The project uses Springdoc OpenAPI to automatically generate API documentation.
+The project uses Springdoc OpenAPI to automatically generate interactive API documentation.
 
-## Local Swagger:
+Swagger UI allows you to:
 
-http://localhost:8080/swagger-ui/index.html
+* explore available endpoints,
+* inspect request and response models,
+* authorize requests using JWT,
+* execute API requests directly from the browser.
 
+### Local Swagger
 
-## Production Swagger:
+[Open Local Swagger](http://localhost:8080/swagger-ui/index.html)
 
-http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.h
+### Production Swagger
 
-Swagger provides an interactive way to test the API.
+[Open Production Swagger](http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.html)
 
-## Using JWT in Swagger
+### Using JWT in Swagger
 
-- 1. Register a user.
+1. Register a user using `/api/auth/register`.
+2. Login using `/api/auth/login`.
+3. Copy the JWT token from the response.
+4. Click **Authorize** in Swagger UI.
+5. Enter:
 
-- 2. Login using /api/auth/login .
-
-- 3. Copy the JWT token from the response.
-
-- 4. Click Authorize in Swagger.
-
-- 5. Enter:
-
+```text
 Bearer <your-token>
+```
 
-- 6. Execute protected endpoints.
+6. Execute protected endpoints.
 
-## Docker
+## 🐳 Docker
 
 The application is containerized using Docker.
 
-The local environment can run the application together with MySQL using Docker Compose.
+Docker Compose is used to run the application together with MySQL in the local development environment.
 
-## Example:
+### Run with Docker Compose
 
+```bash
 docker compose up --build
+```
 
-The application runs on:
+The application will be available at:
 
 http://localhost:8080
 
-## Swagger:
+To stop the containers:
 
-http://localhost:8080/swagger-ui/index.html
+```bash
+docker compose down
+```
 
 ## ☁️ AWS Deployment
 
-The application was deployed to AWS using:
+The application is deployed to AWS using Docker, Amazon ECR Public, EC2 and RDS.
 
-│ Local project │
+The deployment flow is:
 
-
-## Docker image
-
-The deployed image is stored in Amazon ECR Public:
-
-public.ecr.aws/c5q4d8k8/bookstore-api:v02
-
-## The EC2 instance runs:
-
+```text
+Local Project
+    │
+    │ Docker build
+    ▼
+Amazon ECR Public
+    │
+    │ Docker image
+    ▼
+AWS EC2
+    │
+    │ Docker
+    ▼
+Book Store API
+    │
+    │ JDBC
+    ▼
+AWS RDS
+    │
+    ▼
+MySQL
 ```
+
+### Docker Image
+
+The deployed Docker image is stored in Amazon ECR Public:
+
+```text
+public.ecr.aws/c5q4d8k8/bookstore-api:v02
+```
+
+### EC2 Configuration
+
+The EC2 instance exposes the application through port 80 and forwards traffic to the Spring Boot application running on port 8080 inside Docker.
+
+```text
 EC2 port 80
-↓
+    ↓
 Docker port 8080
-↓
+    ↓
 Spring Boot application
 ```
 
-The application connects to the AWS RDS MySQL database.
+Database credentials are supplied at runtime and are not stored in the repository.
 
-## Local Setup
+## 💻 Local Setup
 
-## Requirements
-
+### Requirements
 
 Before running the project, install:
 
-- JDK 17
+* JDK 17,
+* Docker Desktop,
+* Git.
 
-- Docker Desktop
+Maven Wrapper is included in the project, so a separate Maven installation is not required.
 
-- Git
+### Clone the Repository
 
-Maven Wrapper is included in the project.
-
-## Clone the repository
-
+```bash
 git clone https://github.com/slawomir-pacek/book-store.git
-
 cd book-store
+```
 
-## Run with Docker Compose
+### Run with Docker Compose
 
+```bash
 docker compose up --build
+```
 
 The API will be available at:
 
 http://localhost:8080
 
-## Swagger:
+Swagger UI:
 
 http://localhost:8080/swagger-ui/index.html
 
-## Stop containers
+### Run from IntelliJ IDEA
 
-docker compose down
+The application can also be started directly from IntelliJ IDEA.
 
-## Run from IntelliJ IDEA
+Make sure the database is available and configure the datasource for the selected environment.
 
-The project can also be started directly from IntelliJ IDEA.
+Run:
 
-Make sure the database is available and configure the datasource for your local environment.
-
-Then run:
-
+```text
 BookStoreApplication
+```
 
 The application starts on:
 
+```text
 http://localhost:8080
+```
 
+## 🔐 Security Configuration
 
-## Spring Security is configured with:
+Spring Security provides:
 
-- stateless sessions,
+* stateless session management,
+* JWT authentication,
+* custom `UserDetailsService`,
+* BCrypt password encoding,
+* JWT authentication filter,
+* method-level security,
+* role-based authorization.
 
-- JWT authentication,
+Public endpoints include:
 
-- custom UserDetailsService ,
-
-- BCrypt password encoder,
-
-- JWT authentication filter,
-
-- method-level security,
-
-- role-based authorization.
-
-## Public endpoints include:
-
-/api/auth/register /api/auth/login /swagger-ui/**
-
+```text
+/api/auth/register
+/api/auth/login
+/swagger-ui/**
 /v3/api-docs/**
+```
 
 Other endpoints require authentication.
 
-Administrative operations require the ADMIN role.
+Administrative operations require the `ADMIN` role.
 
-## Challenges & Solutions
+## 🧩 Challenges & Solutions
 
-## JWT authentication
+### JWT Authentication
 
-Challenge: Protecting REST endpoints without using server-side sessions.
+**Challenge:**
+Protecting REST endpoints without using server-side sessions.
 
-Solution: Implemented JWT authentication with a custom authentication filter and
+**Solution:**
+Implemented stateless JWT authentication using a custom authentication filter integrated with Spring Security.
 
-Spring Security.
+### Role-Based Authorization
 
-## Role-based authorization
+**Challenge:**
+Users and administrators require different permissions.
 
-Challenge: Users and administrators require different permissions.
+**Solution:**
+Implemented role-based authorization using Spring Security and method-level security.
 
-Solution: Implemented Spring Security authorities and method-level authorization
+For example:
 
-using @PreAuthorize .
-
-## Example:
-
+```java
 @PreAuthorize("hasRole('ADMIN')")
-
-
-## Database migrations
-
-Challenge: Keeping database structure consistent between development and deployment environments.
-
-Solution: Liquibase changesets are used to version and automatically apply database changes.
-
-## Testing secured controllers
-
-Challenge: Controller tests need to simulate authenticated users and different roles.
-
-Solution: Used MockMvc together with Spring Security Test and Mockito.
-
-## Docker networking
-
-Challenge: The database hostname differs between local Docker, IntelliJ and AWS environments.
-
-Solution: Database configuration is adapted to the environment:
-
 ```
+
+### Database Migrations
+
+**Challenge:**
+Keeping the database structure consistent between development and deployment environments.
+
+**Solution:**
+Liquibase changesets are used to version and automatically apply database changes.
+
+### Testing Secured Controllers
+
+**Challenge:**
+Controller tests need to simulate authenticated users and different roles.
+
+**Solution:**
+Used MockMvc together with Spring Security Test and Mockito.
+
+### Docker Networking
+
+**Challenge:**
+The database hostname differs between local Docker, IntelliJ and AWS environments.
+
+**Solution:**
+Database configuration is adapted to the environment:
+
+```text
 Local Docker
-↓
+    ↓
 MySQL Docker service
+
 AWS
-↓
+    ↓
 AWS RDS endpoint
 ```
 
-## AWS deployment
+### AWS Deployment
 
-Challenge: Deploying a Spring Boot application required coordinating Docker, ECR, EC2, RDS, networking and application configuration.
+**Challenge:**
+Deploying the application required coordinating Docker, ECR, EC2, RDS, networking and application configuration.
 
-Solution: Created a Docker image, pushed it to Amazon ECR Public and deployed it to an EC2 instance connected to an RDS MySQL database.
+**Solution:**
+Created a Docker image, pushed it to Amazon ECR Public and deployed it to an EC2 instance connected to an RDS MySQL database.
 
+During deployment, Swagger initially returned:
 
-During deployment Swagger initially returned:
-
+```text
 HTTP 403 Forbidden
+```
 
 The Spring Security configuration was updated to allow Swagger UI and OpenAPI endpoints.
 
 After deploying the corrected image, the EC2 instance returned:
 
+```text
 HTTP/1.1 200
+```
 
 confirming that Swagger UI was successfully available.
 
-## Future Improvements
+## 🚀 Future Improvements
 
 Possible next steps include:
 
-- refresh tokens,
-
-- order management,
-
-- checkout functionality,
-
-- book cover images,
-
-- shopping order history,
-
-- CI/CD with GitHub Actions,
-
-- automated AWS deployment,
-
-- Testcontainers,
-
-- application monitoring,
-
-- metrics and health checks,
-
-- frontend application.
-
-## What I Learned
-
-Through this project I gained practical experience with:
-
-- Java backend development,
-
-- Spring Boot,
-
-- REST API design,
-
-- Spring Security,
-
-- JWT authentication,
-
-- role-based authorization,
-
-- Spring Data JPA,
-
-- Hibernate,
-
-- relational database design,
-
-- Liquibase,
-
-- unit and integration-style testing,
-
-- Mockito,
-
-- MockMvc,
-
-- Docker,
-
-- Docker Compose,
-
-- AWS EC2,
-
-- AWS RDS,
-
-- Amazon ECR,
-
-- Swagger / OpenAPI,
-
-- debugging deployed applications,
-
-- API documentation.
-
-The most valuable part of the project was learning how these technologies work together as one backend system rather than treating each technology as a separate exercise.
-
+* refresh tokens,
+* order management,
+* checkout functionality,
+* book cover images,
+* shopping order history,
+* CI/CD with GitHub Actions,
+* automated AWS deployment,
+* Testcontainers,
+* application monitoring,
+* metrics and health checks,
+* frontend application.
 
 ## Project Links
 
