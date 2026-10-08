@@ -112,6 +112,20 @@ ADMIN
 
 Regular users can access the bookstore functionality, while administrators have additional permissions for managing books and categories.
 
+### Default Admin Account
+
+For development and demonstration purposes, the database migration creates a default administrator account:
+
+| Field | Value |
+|---|---|
+| Email | `admin@bookstore.com` |
+| Password | `Admin123!` |
+| Role | `ADMIN` |
+
+The administrator account is created automatically by Liquibase when the database is initialized from scratch.
+
+> ⚠️ This account is intended for local development and demonstration purposes. The default password should be changed or removed before using the application in a real production environment.
+
 ## Books
 
 The Book API provides:
