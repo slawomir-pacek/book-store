@@ -65,20 +65,6 @@ Security is handled independently through Spring Security and a JWT authenticati
 
 The application is deployed on AWS EC2 and documented with Swagger UI.
 
-## Swagger UI
-
-## [Open Swagger UI](http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.html)
-
-Swagger can be used to:
-
-- explore available endpoints,
-
-- inspect request and response models,
-
-- authenticate using a JWT token,
-
-- execute API requests directly from the browser.
-
 ## Main Features
 
 ## Authentication
@@ -381,7 +367,25 @@ Security-related scenarios include:
 * CSRF handling where required,
 * service interactions.
 
-### Run Tests
+## 🧪 Running Tests
+
+The project uses Maven to run automated tests.
+
+### Windows (PowerShell / CMD)
+
+Run all tests:
+
+```bash
+.\mvnw.cmd test
+```
+
+Run a clean build and verify the project, including tests:
+
+```bash
+.\mvnw.cmd clean verify
+```
+
+### macOS / Linux
 
 Run all tests:
 
@@ -389,44 +393,18 @@ Run all tests:
 ./mvnw test
 ```
 
-On Windows:
-
-```powershell
-.\mvnw.cmd test
-```
-
-Run the full Maven verification:
+Run a clean build and verify the project, including tests:
 
 ```bash
 ./mvnw clean verify
 ```
 
-## 📖 Swagger / OpenAPI
+## 📖 API Documentation
 
-The project uses Springdoc OpenAPI to automatically generate interactive API documentation.
+The project uses Springdoc OpenAPI to generate interactive API documentation.
 
-Swagger UI allows you to:
-
-* explore available endpoints,
-* inspect request and response models,
-* authorize requests using JWT,
-* execute API requests directly from the browser.
-
-### Local Swagger
-
-[Open Local Swagger](http://localhost:8080/swagger-ui/index.html)
-
-### Production Swagger
-
-[Open Production Swagger](http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.html)
-
-### Using JWT in Swagger
-
-1. Register a user using `/api/auth/register`.
-2. Login using `/api/auth/login`.
-3. Copy the JWT token from the response.
-4. Click **Authorize** in Swagger UI.
-5. Enter:
+* **Local:** [Swagger UI](http://localhost:8080/swagger-ui/index.html)
+* **Production:** [Swagger UI](http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.html)
 
 ```text
 Bearer <your-token>
@@ -583,116 +561,26 @@ Other endpoints require authentication.
 
 Administrative operations require the `ADMIN` role.
 
-## 🧩 Challenges & Solutions
-
-### JWT Authentication
-
-**Challenge:**
-Protecting REST endpoints without using server-side sessions.
-
-**Solution:**
-Implemented stateless JWT authentication using a custom authentication filter integrated with Spring Security.
-
-### Role-Based Authorization
-
-**Challenge:**
-Users and administrators require different permissions.
-
-**Solution:**
-Implemented role-based authorization using Spring Security and method-level security.
-
-For example:
-
-```java
-@PreAuthorize("hasRole('ADMIN')")
-```
+## 🧩 Technical Implementation
 
 ### Database Migrations
 
-**Challenge:**
-Keeping the database structure consistent between development and deployment environments.
+Used Liquibase changesets to version database schema changes and apply them consistently across environments.
 
-**Solution:**
-Liquibase changesets are used to version and automatically apply database changes.
+### Testing
 
-### Testing Secured Controllers
+Implemented automated tests for controllers and services using JUnit, Mockito, MockMvc and Spring Security Test.
 
-**Challenge:**
-Controller tests need to simulate authenticated users and different roles.
+### Environment Configuration
 
-**Solution:**
-Used MockMvc together with Spring Security Test and Mockito.
-
-### Docker Networking
-
-**Challenge:**
-The database hostname differs between local Docker, IntelliJ and AWS environments.
-
-**Solution:**
-Database configuration is adapted to the environment:
-
-```text
-Local Docker
-    ↓
-MySQL Docker service
-
-AWS
-    ↓
-AWS RDS endpoint
-```
+Configured database connectivity for different environments, using a local MySQL container during development and Amazon RDS in production.
 
 ### AWS Deployment
 
-**Challenge:**
-Deploying the application required coordinating Docker, ECR, EC2, RDS, networking and application configuration.
-
-**Solution:**
-Created a Docker image, pushed it to Amazon ECR Public and deployed it to an EC2 instance connected to an RDS MySQL database.
-
-During deployment, Swagger initially returned:
-
-```text
-HTTP 403 Forbidden
-```
-
-The Spring Security configuration was updated to allow Swagger UI and OpenAPI endpoints.
-
-After deploying the corrected image, the EC2 instance returned:
-
-```text
-HTTP/1.1 200
-```
-
-confirming that Swagger UI was successfully available.
-
-## 🚀 Future Improvements
-
-Possible next steps include:
-
-* refresh tokens,
-* order management,
-* checkout functionality,
-* book cover images,
-* shopping order history,
-* CI/CD with GitHub Actions,
-* automated AWS deployment,
-* Testcontainers,
-* application monitoring,
-* metrics and health checks,
-* frontend application.
+Built a Docker image, published it to Amazon ECR Public and deployed the Spring Boot application to Amazon EC2, connected to an Amazon RDS MySQL database.
 
 ## Project Links
-
-## GitHub Repository
-
-[https://github.com/slawomir-pacek/book-store](https://github.com/slawomir-pacek/book-store)
 
 ## Live Swagger
 
 [http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.html](http://ec2-51-21-245-28.eu-north-1.compute.amazonaws.com/swagger-ui/index.html)
-
-## Author
-
-## Sławomir Pacek
-
-Java Backend Developer in progress, focused on building practical backend applications using Java, Spring Boot, databases, testing, Docker and AWS.
