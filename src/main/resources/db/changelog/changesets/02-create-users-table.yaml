@@ -42,3 +42,22 @@ databaseChangeLog:
               - column:
                   name: shipping_address
                   type: VARCHAR(255)
+
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: admin@bookstore.com
+              - column:
+                  name: password
+                  value: '$2a$10$GiuvZPHOINFHdx/kQTTrNOH/Ua2CaG8mA1LMZNaVXSZ6QM.ZZU.Bu'
+              - column:
+                  name: first_name
+                  value: Admin
+              - column:
+                  name: last_name
+                  value: Bookstore
+              - column:
+                  name: shipping_address
+                  value: Admin address
